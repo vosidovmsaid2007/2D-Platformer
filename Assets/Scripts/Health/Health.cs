@@ -4,16 +4,25 @@ using UnityEngine;
 
 public class Health : MonoBehaviour
 {
+    [Header ("Health")]
+
     [SerializeField] private float startingHealth;
     public float currentHealth { get; private set; }
 
     private Animator anim;
     private bool dead;
 
+    [Header("iFrames")]
+    [SerializeField] private float invulnerabilityDuration;
+    [SerializeField] private int numberOfFlashes;
+    private SpriteRenderer spriteRend;
+
+
     private void Awake()
     {
         currentHealth = startingHealth;
         anim = GetComponent<Animator>();
+        spriteRend = GetComponent<SpriteRenderer>();
     }
 
     public void TakeDamage(float _damage)
@@ -23,6 +32,7 @@ public class Health : MonoBehaviour
         if(currentHealth > 0)
         {
             anim.SetTrigger("hurt");
+            StartCoroutine(Invenurability());
         }
         else{
             if(!dead)
@@ -38,6 +48,18 @@ public class Health : MonoBehaviour
     public void AddHealth(float _value)
     {
         currentHealth = Mathf.Clamp(currentHealth + _value, 0, startingHealth);
+    }
+
+    private IEnumerator Invenurability()
+    {
+        Physics2D.IgnoreLayerCollision(10, 11, true);
+        for(int i = 0; i < numberOfFlashes; i++)
+        {
+            spriteRend.color = new Color(1, 0, 0, 0.5f);
+        }
+        Physics2D.IgnoreLayerCollision(10, 11, true);
+
+
     }
 
 }
